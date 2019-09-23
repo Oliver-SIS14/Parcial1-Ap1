@@ -76,5 +76,14 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BLL\" />
+    <Folder Include="DAL\Script\" />
+    <Folder Include="Entidades\" />
+    <Folder Include="Resources\" />
+    <Folder Include="UI\Consulta\" />
+    <Folder Include="UI\Registro\" />
+    <Folder Include="UI\Reporte\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
