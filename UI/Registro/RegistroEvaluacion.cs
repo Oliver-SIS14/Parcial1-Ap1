@@ -65,13 +65,14 @@ namespace Parcial1_Ap1.UI.Registro
             evaluacion.Fecha = FechaDateTimePicker.Value;
             evaluacion.Valor = Convert.ToDecimal(ValorTextBox.Text);
             evaluacion.Logrado = Convert.ToDecimal(LogradoTextBox.Text);
+            evaluacion.Perdidos = EvaluacionBLL.CalcularPerdido(evaluacion.Valor, evaluacion.Logrado);
 
             if (EvaluacionBLL.CalcularPerdido(evaluacion.Valor, evaluacion.Logrado) > (evaluacion.Valor * (decimal)0.30))
             {
                 PronosticoComboBox.SelectedIndex = 2;
             }
             else
-            if (EvaluacionBLL.CalcularPerdido(evaluacion.Valor, evaluacion.Logrado) <= (evaluacion.Valor * (decimal)0.30) || EvaluacionBLL.CalcularPerdido(evaluacion.Valor, evaluacion.Logrado) >= (evaluacion.Valor * (decimal)0.25))
+            if (EvaluacionBLL.CalcularPerdido(evaluacion.Valor, evaluacion.Logrado) <= (evaluacion.Valor * (decimal)0.30) && EvaluacionBLL.CalcularPerdido(evaluacion.Valor, evaluacion.Logrado) >= (evaluacion.Valor * (decimal)0.25))
             {
                 PronosticoComboBox.SelectedIndex = 1;
             }
@@ -81,7 +82,7 @@ namespace Parcial1_Ap1.UI.Registro
                 PronosticoComboBox.SelectedIndex = 0;
             }
 
-            evaluacion.Perdidos = EvaluacionBLL.CalcularPerdido(evaluacion.Valor, evaluacion.Logrado);
+
             evaluacion.Pronostico = Convert.ToInt32(PronosticoComboBox.SelectedIndex);
 
             return evaluacion;
@@ -100,20 +101,40 @@ namespace Parcial1_Ap1.UI.Registro
 
             if (string.IsNullOrWhiteSpace(EstudianteTextBox.Text))
             {
-                MyErrorProvider.SetError(EstudianteTextBox, "El campo estudiante no puede estar vacio");
+                MyErrorProvider.SetError(EstudianteTextBox, "Introduccion no valida en el campo Estudiante");
                 EstudianteTextBox.Focus();
                 paso = false;
             }
-            if (string.IsNullOrWhiteSpace(LogradoTextBox.Text))
+            if (string.IsNullOrWhiteSpace(LogradoTextBox.Text) || Convert.ToDecimal(LogradoTextBox.Text) < 0)
             {
-                MyErrorProvider.SetError(LogradoTextBox, "El campo Logrado no puede estar vacio");
+                MyErrorProvider.SetError(LogradoTextBox, "Introduccion no valida en el campo logrado");
                 LogradoTextBox.Focus();
                 paso = false;
             }
-            if (string.IsNullOrWhiteSpace(ValorTextBox.Text))
+            if (string.IsNullOrWhiteSpace(ValorTextBox.Text) || Convert.ToDecimal(ValorTextBox.Text) < 0)
             {
-                MyErrorProvider.SetError(ValorTextBox, "El campo valor no puede estar vacio");
+                MyErrorProvider.SetError(ValorTextBox, "Introduccion no valida en el campo valor");
                 ValorTextBox.Focus();
+                paso = false;
+            }
+            if (Convert.ToDecimal(LogradoTextBox.Text) < 0)
+            {
+                MyErrorProvider.SetError(LogradoTextBox, "El valor introducido en el campo logrado es incorrecto");
+                LogradoTextBox.Focus();
+                paso = false;
+            }
+            
+            if (Convert.ToDecimal(ValorTextBox.Text) < 0)
+            {
+                MyErrorProvider.SetError(ValorTextBox, "El valor introducido en el campo valor es incorrecto");
+                ValorTextBox.Focus();
+                paso = false;
+            }
+
+            if (Convert.ToDecimal(LogradoTextBox.Text) > Convert.ToDecimal(ValorTextBox.Text))
+            {
+                MyErrorProvider.SetError(LogradoTextBox, "El valor introducido en el campo logrado es incorrecto");
+                LogradoTextBox.Focus();
                 paso = false;
             }
             return paso;
@@ -164,16 +185,16 @@ namespace Parcial1_Ap1.UI.Registro
 
             Evaluacion evaluacion = new Evaluacion();
             evaluacion = EvaluacionBLL.Buscar(id);
-            Limpiar();
-
+            
+                Limpiar();
             if(evaluacion == null)
             {
                 MessageBox.Show("No encontrado");
             }
             else
             {
-               
                 LlenarCampo(evaluacion);
+
             }
         }
 
@@ -186,15 +207,141 @@ namespace Parcial1_Ap1.UI.Registro
 
             Limpiar();
 
-            if (EvaluacionBLL.Eliminar(id))
+            if (EvaluacionBLL.Buscar(id)!=null) 
             {
+
+               if (EvaluacionBLL.Eliminar(id))
                 MessageBox.Show("Eliminado", "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+               else
+                {
+                MyErrorProvider.SetError(IDNumericUpDown, "No se pudo eliminar");
+                IDNumericUpDown.Focus();
+                }
+
             }
             else
             {
+                MessageBox.Show("Evaluacion no encontrada","Fallo", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 MyErrorProvider.SetError(IDNumericUpDown, "No se pudo eliminar");
                 IDNumericUpDown.Focus();
             }
+
         }
+
+        private void ValorTextBox_TextChanged(object sender, EventArgs e)
+        {
+            MyErrorProvider.Clear();
+
+            if (string.IsNullOrWhiteSpace(ValorTextBox.Text))
+            {
+                ValorTextBox.Text = Convert.ToString(0);
+            }
+            if (string.IsNullOrWhiteSpace(LogradoTextBox.Text))
+            {
+                LogradoTextBox.Text = Convert.ToString(0);
+            }
+
+            if (Convert.ToDecimal(ValorTextBox.Text) < 0)
+            {
+                MyErrorProvider.SetError(ValorTextBox, "El valor introducido en el campo valor es incorrecto");
+                ValorTextBox.Focus();
+            }
+            else
+                MyErrorProvider.Clear();
+
+            if (Convert.ToDecimal(LogradoTextBox.Text) > Convert.ToDecimal(ValorTextBox.Text))
+            {
+                MyErrorProvider.SetError(LogradoTextBox, "El valor introducido en el campo logrado es incorrecto");
+                LogradoTextBox.Focus();
+            }
+            else
+                MyErrorProvider.Clear();
+
+
+            if (Convert.ToDecimal(LogradoTextBox.Text) < 0)
+            {
+                MyErrorProvider.SetError(LogradoTextBox, "El valor introducido en el campo logrado es incorrecto");
+                LogradoTextBox.Focus();
+            }
+            else
+                MyErrorProvider.Clear();
+
+            decimal valor = Convert.ToDecimal(ValorTextBox.Text);
+            decimal logrado = Convert.ToDecimal(LogradoTextBox.Text);
+
+            decimal perdido = valor - logrado;
+
+            PerdidoTextBox.Text = Convert.ToString(perdido);
+
+        }
+
+        private void LogradoTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+            MyErrorProvider.Clear();
+
+            if (string.IsNullOrWhiteSpace(ValorTextBox.Text))
+            {
+                ValorTextBox.Text = Convert.ToString(0);
+            }
+            if (string.IsNullOrWhiteSpace(LogradoTextBox.Text))
+            {
+                LogradoTextBox.Text = Convert.ToString(0);
+            }
+
+            if (Convert.ToDecimal(LogradoTextBox.Text) < 0)
+            {
+                MyErrorProvider.SetError(LogradoTextBox, "El valor introducido en el campo logrado es incorrecto");
+                LogradoTextBox.Focus();
+                return;
+            }
+            else
+                MyErrorProvider.Clear();
+
+            if (Convert.ToDecimal(ValorTextBox.Text) < 0)
+            {
+                MyErrorProvider.SetError(ValorTextBox, "El valor introducido en el campo valor es incorrecto");
+                ValorTextBox.Focus();
+                return;
+            }
+            else
+                MyErrorProvider.Clear();
+
+
+            if (Convert.ToDecimal(LogradoTextBox.Text) > Convert.ToDecimal(ValorTextBox.Text))
+            {
+                MyErrorProvider.SetError(LogradoTextBox, "El valor introducido en el campo logrado es incorrecto");
+                LogradoTextBox.Focus();
+                return;
+            }
+            else
+                MyErrorProvider.Clear();
+
+            decimal valor = Convert.ToDecimal(ValorTextBox.Text);
+            decimal logrado = Convert.ToDecimal(LogradoTextBox.Text);
+
+            decimal perdido = valor - logrado;
+
+            PerdidoTextBox.Text = Convert.ToString(perdido);
+
+            if (EvaluacionBLL.CalcularPerdido(valor, logrado) > (valor * (decimal)0.30))
+            {
+                PronosticoComboBox.SelectedIndex = 2;
+            }
+
+            else
+            if (EvaluacionBLL.CalcularPerdido(valor, logrado) <= (valor * (decimal)0.30) && EvaluacionBLL.CalcularPerdido(valor, logrado) >= (valor * (decimal)0.25))
+            {
+                PronosticoComboBox.SelectedIndex = 1;
+            }
+
+            else
+            if (EvaluacionBLL.CalcularPerdido(valor, logrado) < (valor * (decimal)0.25))
+            {
+                PronosticoComboBox.SelectedIndex = 0;
+            }
+
+        }
+
     }
 }

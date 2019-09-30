@@ -68,6 +68,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Consulta\ConsultaEvaluacion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Consulta\ConsultaEvaluacion.Designer.cs">
+      <DependentUpon>ConsultaEvaluacion.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Registro\RegistroEvaluacion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,6 +92,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="UI\Consulta\ConsultaEvaluacion.resx">
+      <DependentUpon>ConsultaEvaluacion.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Registro\RegistroEvaluacion.resx">
       <DependentUpon>RegistroEvaluacion.cs</DependentUpon>
     </EmbeddedResource>
@@ -105,11 +114,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
-    <Folder Include="UI\Consulta\" />
     <Folder Include="UI\Reporte\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DAL\Script\ScriptParcial.sql" />
+    <Content Include="DAL\Script\PrimerParcialScript.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

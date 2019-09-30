@@ -1,4 +1,5 @@
-﻿using Parcial1_Ap1.UI.Registro;
+﻿using Parcial1_Ap1.UI.Consulta;
+using Parcial1_Ap1.UI.Registro;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,6 +22,13 @@ namespace Parcial1_Ap1
         private void RegistroToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form Formulario = new RegistroEvaluacion();
+            Formulario.MdiParent = this;
+            Formulario.Show();
+        }
+
+        private void ConsultaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form Formulario = new ConsultaEvaluacion();
             Formulario.MdiParent = this;
             Formulario.Show();
         }

@@ -1,0 +1,3 @@
+create database PrimerParcialDb
+
+use PrimerParcialDb
